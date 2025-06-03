@@ -18,8 +18,7 @@ jobs:
         with:
           terraform_version: 1.5.7
 
-      - name: Install Azure CLI
-        uses: azure/cli@v1
+      # REMOVED unnecessary Azure CLI setup step
 
       - name: Run PowerShell Script
         shell: pwsh
