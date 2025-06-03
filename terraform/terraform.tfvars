@@ -1,2 +1,2 @@
-rg_name  = "aks-dev-rgp"
+rg_name  = "aks-terr-dev-rgp"
 location = "East US 2"
