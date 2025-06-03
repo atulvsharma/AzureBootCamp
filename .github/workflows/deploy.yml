@@ -2,14 +2,8 @@ name: Azure Bootstrap and Deploy
 
 on:
   push:
-      branches:
-        - 02-Rev-RscGrp-StrAcct-For-TFStFile
-  workflow_dispatch:
-    inputs:
-      destroy:
-        description: 'Destroy infrastructure after deployment? (true/false)'
-        required: true
-        default: 'false'
+    branches:
+      - 02-Rev-RscGrp-StrAcct-For-TFStFile
 
 jobs:
   bootstrap-and-deploy:
@@ -39,31 +33,6 @@ jobs:
       - name: Run Terraform Deployment
         run: ./scripts/deploy.ps1
         shell: pwsh
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
-  destroy:
-    runs-on: ubuntu-latest
-    needs: bootstrap-and-deploy
-    if: ${{ github.event.inputs.destroy == 'true' }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.7
-
-      - name: Terraform Destroy
-        run: |
-          az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-          terraform -chdir=terraform init -input=false
-          terraform -chdir=terraform destroy -auto-approve -input=false
-        shell: bash
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
