@@ -16,14 +16,14 @@ az storage account create --name $BACKEND_STORAGE --resource-group $BACKEND_RG -
 echo "Creating storage container..."
 az storage container create --name $CONTAINER_NAME --account-name $BACKEND_STORAGE
 
-echo "Creating service principal..."
-SP_JSON=$(az ad sp create-for-rbac --name github-terraform --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID)
-SP_APP_ID=$(echo $SP_JSON | jq -r '.appId')
-SP_PASSWORD=$(echo $SP_JSON | jq -r '.password')
+#echo "Creating service principal..."
+#SP_JSON=$(az ad sp create-for-rbac --name terraform-sp --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID)
+#SP_APP_ID=$(echo $SP_JSON | jq -r '.appId')
+#SP_PASSWORD=$(echo $SP_JSON | jq -r '.password')
 
-echo "Assigning Storage Account Key Operator Service Role..."
-STORAGE_ID=$(az storage account show --name $BACKEND_STORAGE --resource-group $BACKEND_RG --query "id" -o tsv)
-az role assignment create --assignee $SP_APP_ID --role "Storage Account Key Operator Service Role" --scope $STORAGE_ID
+#echo "Assigning Storage Account Key Operator Service Role..."
+#STORAGE_ID=$(az storage account show --name $BACKEND_STORAGE --resource-group $BACKEND_RG --query "id" -o tsv)
+#az role assignment create --assignee $SP_APP_ID --role "Storage Account Key Operator Service Role" --scope $STORAGE_ID
 
-echo "::set-output name=client_id::$SP_APP_ID"
-echo "::set-output name=client_secret::$SP_PASSWORD"
+#echo "::set-output name=client_id::$SP_APP_ID"
+#echo "::set-output name=client_secret::$SP_PASSWORD"
