@@ -1,5 +1,5 @@
 variable "rg_name" {
-  default = "example-rg"
+  default = "my-default-rgp"
 }
 
 variable "location" {
