@@ -17,7 +17,7 @@ echo "Creating storage container..."
 az storage container create --name $CONTAINER_NAME --account-name $BACKEND_STORAGE
 
 echo "Creating service principal..."
-SP_JSON=$(az ad sp create-for-rbac --name terraform-sp --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID)
+SP_JSON=$(az ad sp create-for-rbac --name github-terraform --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID)
 SP_APP_ID=$(echo $SP_JSON | jq -r '.appId')
 SP_PASSWORD=$(echo $SP_JSON | jq -r '.password')
 
