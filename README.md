@@ -23,6 +23,7 @@ This will give give the required details in the below JSON format -
 While running the deploy.ps1 I was getting below error 
 "Error: Failed to get existing workspaces: Error retrieving keys for Storage Account "devtfstorageacct": storage.AccountsClient#ListKeys: Failure responding to request: StatusCode=403 -- Original Error: autorest/azure: Service returned an error. Status=403"
 
-I assigned a role "Storage Account Key Operator Service Role" for devtfstorageacct storage account from IAM.
+I assigned a role "Storage Account Key Operator Service Role" for github-terraform service principal on devtfstorageacct storage account from IAM using Azure portal.
+I also assigned a role "contributor" for github-terraform service principal on my subscription from IAM using Azure portal.
 
 
