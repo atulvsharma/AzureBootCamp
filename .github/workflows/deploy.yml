@@ -1,6 +1,9 @@
 name: Azure Bootstrap and Deploy
 
 on:
+  push:
+      branches:
+        - 02-Rev-RscGrp-StrAcct-For-TFStFile
   workflow_dispatch:
     inputs:
       destroy:
