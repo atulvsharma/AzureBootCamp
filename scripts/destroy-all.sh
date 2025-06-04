@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Export environment variables for Terraform authentication
+export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+export ARM_TENANT_ID=$AZURE_TENANT_ID
+export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
+
 # Log in
 az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
 az account set --subscription $AZURE_SUBSCRIPTION_ID
