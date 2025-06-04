@@ -16,10 +16,10 @@ terraform -chdir=terraform init
 terraform -chdir=terraform destroy -auto-approve
 
 # Delete storage container
-az storage container delete --name $CONTAINER_NAME --account-name $BACKEND_STORAGE
+az storage container delete --name $CONTAINER_NAME --account-name $BACKEND_STORAGE  --auth-mode login --yes
 
 # Delete storage account
-az storage account delete --name $BACKEND_STORAGE --resource-group $BACKEND_RG
+az storage account delete --name $BACKEND_STORAGE --resource-group $BACKEND_RG --yes
 
 # Delete resource group
 az group delete --name $BACKEND_RG --yes --no-wait
