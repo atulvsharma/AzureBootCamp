@@ -12,7 +12,7 @@ az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenan
 az account set --subscription $AZURE_SUBSCRIPTION_ID
 
 # Destroy Terraform-managed infrastructure
-#terraform -chdir=terraform init
+terraform -chdir=terraform init
 terraform -chdir=terraform destroy -auto-approve
 
 # Delete storage container
