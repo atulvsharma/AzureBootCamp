@@ -1,14 +1,11 @@
-name: Azure Bootstrap and Deploy
+name: Destroy All Azure Resources
 
 on:
-  push:
-    branches:
-      - 02-Rev-RscGrp-StrAcct-For-TFStFile
+  workflow_dispatch:
 
 jobs:
-  bootstrap-and-deploy:
+  destroy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -18,8 +15,8 @@ jobs:
         with:
           terraform_version: 1.5.7
 
-      - name: Run Bootstrap Script
-        run: ./scripts/bootstrap.sh
+      - name: Destroy All
+        run: ./scripts/destroy-all.sh
         env:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -28,13 +25,4 @@ jobs:
           BACKEND_RG: aksdev-tfstate-rg
           BACKEND_STORAGE: aksdevstracct
           CONTAINER_NAME: aksdevtfstate
-          LOCATION: eastus
-
-      - name: Run Terraform Deployment
-        run: ./scripts/deploy.ps1
-        shell: pwsh
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          

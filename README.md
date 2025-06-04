@@ -1,29 +1,22 @@
-# Azure Resource Group with Terraform and GitHub Actions
+# Azure Bootstrap and Deploy with Terraform and GitHub Actions
 
-This project demonstrates how to use GitHub Actions and PowerShell to deploy an Azure Resource Group using Terraform and store the state in an Azure Storage Account.
+This project automates:
+- Creation of Azure backend infrastructure (resource group, storage account, container)
+- Creation of a service principal with required roles
+- Terraform-based provisioning of an Azure Resource Group
+- Destroy the resources manually from GitHub
+- Destroy the backend resources (resource group, storage account and container) holding the state file.
 
-I used below commands to create the backend resources
-az group create --name tfstate-rg --location eastus
-az storage account create --name devtfstorageacct --resource-group tfstate-rg --sku Standard_LRS
-az storage container create --name tfstate --account-name devtfstorageacct
+Notes 
+1. destroy-infra.yml workflow will not be listed under Actions --> Workflow untill master branch is      switched to 02-Rev-RscGrp-StrAcct-For-TFStFile. This can be done by going in repo AzureBootCamp --> Settings --> Default branch --> Switch the master branch to 02-Rev-RscGrp-StrAcct-For-TFStFile
 
-I used below command to create service pronciple 
-az ad sp create-for-rbac --name "github-terraform" --sdk-auth
+2. Goto Actions --> Under All Workflows --> You will see all the workflows and click on the workflow --> From Run workflow dropdown "Click on the Run WorkFlow"  
 
-This will give give the required details in the below JSON format -
-
-{
-  "clientId": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-  "clientSecret": "YOUR_SECRET_VALUE",
-  "subscriptionId": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-  "tenantId": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-  ...
-}
-
-While running the deploy.ps1 I was getting below error 
-"Error: Failed to get existing workspaces: Error retrieving keys for Storage Account "devtfstorageacct": storage.AccountsClient#ListKeys: Failure responding to request: StatusCode=403 -- Original Error: autorest/azure: Service returned an error. Status=403"
-
-I assigned a role "Storage Account Key Operator Service Role" for github-terraform service principal on devtfstorageacct storage account from IAM using Azure portal.
-I also assigned a role "contributor" for github-terraform service principal on my subscription from IAM using Azure portal.
-
-
+Error
+1. /home/runner/work/_temp/9c89959e-0a48-4cb4-b88b-4d7477075f63.sh: line 1: ./scripts/destroy-all.sh: Permission denied
+Error: Process completed with exit code 126.
+ 
+ Resolution 
+1. git update-index --chmod=+x scripts/destroy-all.sh
+git commit -m "Make destroy-all.sh executable"
+git push
