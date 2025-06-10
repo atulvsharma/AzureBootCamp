@@ -8,5 +8,5 @@ cd terraform-manifests
 for env in dev qa prod stage; do
   echo "Applying Terraform backend for $env"
   terraform init -backend-config=backend.tfvars
-  terraform apply -var-file=$env.tfvars -auto-approve
+  terraform apply -var-file="$env.tfvars" -auto-approve
 done
