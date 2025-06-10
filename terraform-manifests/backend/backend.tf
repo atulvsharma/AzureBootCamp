@@ -17,9 +17,9 @@ terraform {
   }
 }
 
-provider "azurerm" {
-  features {}
-}
+#provider "azurerm" {
+#  features {}
+#}
 
 locals {
   resource_group_name  = "rg-${var.environment}-tfstate"
