@@ -4,6 +4,10 @@ locals {
   container_name       = "tfstate"
 }
 
+terraform {
+  backend "local" {}
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = local.resource_group_name
   location = var.location
