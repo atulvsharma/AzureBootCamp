@@ -11,13 +11,8 @@ export ARM_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
 export ARM_TENANT_ID=${AZURE_TENANT_ID}
 
 echo "Current directory: $(pwd)"
-#terraform init
-terraform init \
-  -backend-config="resource_group_name=rg-dev-tfstate" \
-  -backend-config="storage_account_name=stdevtfstate001" \
-  -backend-config="container_name=tfstate" \
-  -backend-config="key=dev.tfstate"
-echo "Terraform initialized successfully with backend configuration."
+terraform init -backend=false #As backend is not configured yet
 
 terraform apply -var-file="../${env}.tfvars" -auto-approve
+
 echo "Terraform backend resources provisioned successfully for environment: $env"
