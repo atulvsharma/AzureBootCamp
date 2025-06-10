@@ -1,11 +1,15 @@
+terraform {
+  backend "local" {}
+}
+
+provider "azurerm" {
+  features {}
+}
+
 locals {
   resource_group_name  = "rg-${var.environment}-tfstate"
   storage_account_name = "st${var.environment}tfstate001"
   container_name       = "tfstate"
-}
-
-terraform {
-  backend "local" {}
 }
 
 resource "azurerm_resource_group" "rg" {
