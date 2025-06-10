@@ -9,17 +9,12 @@ fi
 ENV=$1
 
 ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
-TF_DIR="$ROOT_DIR/terraform-manifests"
+TF_DIR="$ROOT_DIR/terraform-manifests/backend"
 
-echo "Root directory: $ROOT_DIR"
-echo "Terraform directory: $TF_DIR"
-echo "Applying Terraform backend for environment: $ENV"
-
+echo "Provisioning Terraform backend resources for environment: $ENV"
 cd "$TF_DIR"
 
 echo "Current directory: $(pwd)"
-echo "Using tfvars file: $ENV.tfvars"
 
 terraform init
-
-terraform apply -var-file="$ENV.tfvars" -auto-approve
+terraform apply -var="environment=$ENV" -var="location=${LOCATION:-eastus}" -auto-approve
