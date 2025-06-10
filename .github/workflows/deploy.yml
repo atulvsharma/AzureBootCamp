@@ -55,7 +55,7 @@ jobs:
           cat env/${TF_ENV}.env >> $GITHUB_ENV
 
       - name: Run Bootstrap Script
-        run: ./scripts/bootstrap.sh
+        run: ./scripts/bootstrap.sh $TF_ENV
         env:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}

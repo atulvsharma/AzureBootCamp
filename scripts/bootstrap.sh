@@ -1,24 +1,25 @@
 #!/bin/bash
 set -e
 
-#ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
-#TF_DIR="$ROOT_DIR/terraform-manifests"
+if [ -z "$1" ]; then
+  echo "Usage: $0 <environment>"
+  exit 1
+fi
+
+ENV=$1
+
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+TF_DIR="$ROOT_DIR/terraform-manifests"
 
 echo "Root directory: $ROOT_DIR"
 echo "Terraform directory: $TF_DIR"
-echo "Initializing Terraform backend for all environments..."
+echo "Applying Terraform backend for environment: $ENV"
 
-cd terraform-manifests
+cd "$TF_DIR"
 
-#for env in dev qa prod stage; do
-  echo "Applying Terraform backend for $env"
+echo "Current directory: $(pwd)"
+echo "Using tfvars file: $ENV.tfvars"
 
-  #cd "$TF_DIR"
-  #echo "Current directory: $(pwd)"
-  #echo "Looking for: $TF_DIR/$env.tfvars"
+terraform init
 
-  #terraform init -backend-config=backend.tfvars
-  terraform init
-  #terraform apply -var-file="$TF_DIR/$env.tfvars" -auto-approve
-  terraform apply -var-file="$env.tfvars" -auto-approve
-#done
+terraform apply -var-file="$ENV.tfvars" -auto-approve
