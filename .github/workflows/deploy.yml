@@ -41,7 +41,8 @@ jobs:
           fi
 
       - name: Show selected environment
-        run: echo "Running for environment: $TF_ENV"
+        run: |
+          echo "Running for environment: $TF_ENV"
 
       - name: Load environment vars from .env file
         run: |
