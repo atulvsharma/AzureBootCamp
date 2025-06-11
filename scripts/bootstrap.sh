@@ -14,9 +14,15 @@ export ARM_TENANT_ID=${AZURE_TENANT_ID}
 #mv backend.tf backend.tf.disabled
 
 echo "Current directory: $(pwd)"
-terraform init -backend=false #As backend is not configured yet. That ensures Terraform ignores the backend block during this phase.
+#terraform init -backend=false #As backend is not configured yet. That ensures Terraform ignores the backend block during this phase.
+terraform init
+#terraform apply -var-file="../${env}.tfvars" -auto-approve
 
-terraform apply -var-file="../${env}.tfvars" -auto-approve
+terraform apply -var="resource_group_name=rg-${TF_ENV}-tfstate" \
+                -var="storage_account_name=st${TF_ENV}tfstate001" \
+                -var="container_name=tfstate" \
+                -var="location=${LOCATION}" \
+                -auto-approve
 
 # Rename backend config back
 #mv backend.tf.disabled backend.tf
