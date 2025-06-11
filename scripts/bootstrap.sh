@@ -11,7 +11,7 @@ export ARM_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
 export ARM_TENANT_ID=${AZURE_TENANT_ID}
 
 # TEMPORARILY rename backend config to avoid triggering backend block
-mv backend.tf backend.tf.disabled
+#mv backend.tf backend.tf.disabled
 
 echo "Current directory: $(pwd)"
 terraform init -backend=false #As backend is not configured yet. That ensures Terraform ignores the backend block during this phase.
@@ -19,6 +19,6 @@ terraform init -backend=false #As backend is not configured yet. That ensures Te
 terraform apply -var-file="../${env}.tfvars" -auto-approve
 
 # Rename backend config back
-mv backend.tf.disabled backend.tf
+#mv backend.tf.disabled backend.tf
 
 echo "Terraform backend resources provisioned successfully for environment: $env"

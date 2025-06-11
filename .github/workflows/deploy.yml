@@ -8,6 +8,7 @@ on:
       - staging
       - prod
       - master
+
   workflow_dispatch:
     inputs:
       environment:
@@ -40,10 +41,9 @@ jobs:
           fi
 
       - name: Show selected environment
-        run: |
-          echo "Running for environment: $TF_ENV"
+        run: echo "Running for environment: $TF_ENV"
 
-      - name: Load environment vars
+      - name: Load environment vars from .env file
         run: |
           echo "Loading env/${TF_ENV}.env"
           cat env/${TF_ENV}.env >> $GITHUB_ENV
@@ -63,11 +63,13 @@ jobs:
           LOCATION: ${{ env.LOCATION }}
 
       - name: Terraform Init
-        run: terraform -chdir=terraform-manifests init \
-          -backend-config="resource_group_name=rg-${TF_ENV}-tfstate" \
-          -backend-config="storage_account_name=st${TF_ENV}tfstate001" \
-          -backend-config="container_name=tfstate" \
-          -backend-config="key=${TF_ENV}.tfstate"
+        run: |
+          terraform -chdir=terraform-manifests init \
+            -backend-config="resource_group_name=rg-${TF_ENV}-tfstate" \
+            -backend-config="storage_account_name=st${TF_ENV}tfstate001" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=${TF_ENV}.tfstate" \
+            -reconfigure
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -75,7 +77,11 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Apply
-        run: terraform -chdir=terraform-manifests apply -var="environment=$TF_ENV" -var-file="${TF_ENV}.tfvars" -auto-approve
+        run: |
+          terraform -chdir=terraform-manifests apply \
+            -var="environment=${TF_ENV}" \
+            -var-file="${TF_ENV}.tfvars" \
+            -auto-approve
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
