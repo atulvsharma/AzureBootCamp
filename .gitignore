@@ -1,9 +1,5 @@
 # Local .terraform directories
-<<<<<<< HEAD
 **/.terraform/*
-=======
-.terraform/
->>>>>>> cae32e362c98bcef543afa24b4d3db3daf58eefc
 
 # .tfstate files
 *.tfstate
