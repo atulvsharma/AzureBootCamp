@@ -1,13 +1,11 @@
 #!/bin/bash
 set -e
 
-echo "Logging into Azure..."
-az login --service-principal \
-  --username "$AZURE_CLIENT_ID" \
-  --password "$AZURE_CLIENT_SECRET" \
-  --tenant "$AZURE_TENANT_ID" >/dev/null
-
-az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+# Export for Terraform authentication
+export ARM_CLIENT_ID="$AZURE_CLIENT_ID"
+export ARM_CLIENT_SECRET="$AZURE_CLIENT_SECRET"
+export ARM_SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID"
+export ARM_TENANT_ID="$AZURE_TENANT_ID"
 
 echo "🔨 Destroying Terraform-managed infrastructure..."
 terraform -chdir=terraform-manifests init \
