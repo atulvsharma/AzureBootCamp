@@ -18,11 +18,18 @@ echo "Current directory: $(pwd)"
 terraform init
 #terraform apply -var-file="../${env}.tfvars" -auto-approve
 
-terraform apply -var="resource_group_name=rg-${TF_ENV}-tfstate" \
-                -var="storage_account_name=st${TF_ENV}tfstate001" \
-                -var="container_name=tfstate" \
-                -var="location=${LOCATION}" \
-                -auto-approve
+#terraform apply -var="resource_group_name=rg-${TF_ENV}-tfstate" \
+#                -var="storage_account_name=st${TF_ENV}tfstate001" \
+#                -var="container_name=tfstate" \
+#                -var="location=${LOCATION}" \
+#                -auto-approve
+
+terraform apply -auto-approve \
+  -var="resource_group_name=$BACKEND_RG" \
+  -var="location=$LOCATION" \
+  -var="storage_account_name=$BACKEND_STORAGE" \
+  -var="container_name=$CONTAINER_NAME"
+
 
 # Rename backend config back
 #mv backend.tf.disabled backend.tf
