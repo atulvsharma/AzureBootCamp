@@ -55,6 +55,7 @@ jobs:
             -backend-config="storage_account_name=${BACKEND_STORAGE}" \
             -backend-config="container_name=${CONTAINER_NAME}" \
             -backend-config="key=${TF_ENV}.tfstate"
+            -reconfigure
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
