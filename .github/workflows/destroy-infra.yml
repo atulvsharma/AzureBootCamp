@@ -43,13 +43,22 @@ jobs:
           fi
 
       - name: Show selected environment
-        run: |
-            echo "Destroying for environment: TF_ENV"
+        run: echo "Destroying for environment: $TF_ENV"
 
       - name: Load environment vars
         run: |
           echo "Loading env/${TF_ENV}.env"
           cat env/${TF_ENV}.env >> $GITHUB_ENV
+
+      - name: Debug backend config
+        run: |
+          echo "TF_ENV=${TF_ENV}"
+          echo "BACKEND_RG=${BACKEND_RG}"
+          echo "BACKEND_STORAGE=${BACKEND_STORAGE}"
+          echo "CONTAINER_NAME=${CONTAINER_NAME}"
+
+      - name: Clean previous Terraform state
+        run: rm -rf terraform-manifests/.terraform
 
       - name: Terraform Init with Backend Config
         run: |
@@ -58,6 +67,14 @@ jobs:
             -backend-config="storage_account_name=${BACKEND_STORAGE}" \
             -backend-config="container_name=${CONTAINER_NAME}" \
             -backend-config="key=${TF_ENV}.tfstate"
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Confirm remote state before destroy
+        run: terraform -chdir=terraform-manifests state list || echo "No remote state found"
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
