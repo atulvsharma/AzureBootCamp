@@ -8,6 +8,9 @@ export ARM_SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID"
 export ARM_TENANT_ID="$AZURE_TENANT_ID"
 
 echo "🔨 Destroying Terraform-managed infrastructure..."
+echo "DEBUG: BACKEND_STORAGE=$BACKEND_STORAGE"
+echo "DEBUG: TF_ENV=$TF_ENV"
+
 terraform -chdir=terraform-manifests init \
   -backend-config="resource_group_name=${BACKEND_RG}" \
   -backend-config="storage_account_name=${BACKEND_STORAGE}" \
