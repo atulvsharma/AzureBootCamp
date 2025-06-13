@@ -12,7 +12,8 @@ terraform -chdir=terraform-manifests init \
   -backend-config="resource_group_name=${BACKEND_RG}" \
   -backend-config="storage_account_name=${BACKEND_STORAGE}" \
   -backend-config="container_name=${CONTAINER_NAME}" \
-  -backend-config="key=${TF_ENV}.tfstate"
+  -backend-config="key=${TF_ENV}.tfstate" \
+  -backend-config="use_azuread_auth=true"
 
 terraform -chdir=terraform-manifests destroy \
   -var-file="${TF_ENV}.tfvars" \
