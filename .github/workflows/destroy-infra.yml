@@ -3,14 +3,15 @@ name: Azure Destroy Infrastructure
 on:
   push:
     branches:
-      - destroy-dev
-      - destroy-qa
-      - destroy-prod
-      - destroy-master
+      - dev
+      - qa
+      - prod
+      - staging
+      - master
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment to destroy (dev, qa, prod)"
+        description: "Environment to destroy (dev, qa, staging, prod)"
         required: false
 
 jobs:
@@ -31,10 +32,12 @@ jobs:
         run: |
           if [ -n "${{ github.event.inputs.environment }}" ]; then
             echo "TF_ENV=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF##*/}" == "destroy-dev" ]]; then
+          elif [[ "${GITHUB_REF##*/}" == "dev" ]]; then
             echo "TF_ENV=dev" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF##*/}" == "destroy-qa" ]]; then
+          elif [[ "${GITHUB_REF##*/}" == "qa" ]]; then
             echo "TF_ENV=qa" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF##*/}" == "staging" ]]; then
+            echo "TF_ENV=staging" >> $GITHUB_ENV
           else
             echo "TF_ENV=prod" >> $GITHUB_ENV
           fi
