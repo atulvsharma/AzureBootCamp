@@ -43,7 +43,8 @@ jobs:
           fi
 
       - name: Show selected environment
-        run: echo "Destroying for environment: $TF_ENV"
+        run: |
+          echo "Destroying for environment: $TF_ENV"
 
       - name: Load environment vars
         run: |
