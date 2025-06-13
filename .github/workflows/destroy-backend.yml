@@ -25,4 +25,5 @@ jobs:
           BACKEND_RG: rg-dev-tfstate
           BACKEND_STORAGE: strgacctdevtfstate
           CONTAINER_NAME: tfstate
+          TF_ENV: dev
           
