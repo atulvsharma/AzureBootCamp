@@ -19,9 +19,9 @@ This repository demonstrates the following:
 ```
 AzureBootCamp/
 ├── .github/workflows/
-│   └── deploy.yml               # GitHub Actions workflow for deployment
+│   └── deploy.yml              # GitHub Actions workflow for deployment
 ├── env/
-│   └── dev.env                  # Environment-specific variables (LOCATION, etc.)
+│   └── dev.env                 # Environment-specific variables (LOCATION, etc.)
 ├── scripts/
 │   └── bootstrap.sh            # Script to bootstrap Terraform backend infrastructure
 ├── terraform-manifests/
@@ -51,7 +51,8 @@ AzureBootCamp/
   - Detects the environment from branch name or input.
   - Loads relevant environment variables.
   - Sets up and initializes Terraform backend.
-  - Applies infrastructure in `main.tf`.
+  - Applies infrastructure in `main.tf`. For this repo, we are not configuring anyother resource other than    
+    backend resources.
 
 ---
 
@@ -64,7 +65,7 @@ AzureBootCamp/
 ---
 
 ### 4. `main.tf`
-- Core Terraform configuration for your Azure application infrastructure:
+- Terraform configuration can be enhanced further to provision Azure resource like:
   - VMs, NSGs, Subnets, etc.
 
 ---
@@ -76,7 +77,8 @@ AzureBootCamp/
 ---
 
 ### 6. `env/dev.env`
-- Environment variable file example:
+- Dev environment variable file is as below. Other qa.env, staging.env and prod.env files can also be found at 
+  this location. 
   ```env
   LOCATION=eastus
   BACKEND_RG=rg-dev-tfstate
@@ -117,5 +119,4 @@ AzureBootCamp/
 ## 🔮 Next Steps
 
 - Add Terraform modules to `main.tf` for app-specific infrastructure.
-- Extend to other environments like **qa** and **prod**.
 - Configure Terraform outputs and state locking if needed.
