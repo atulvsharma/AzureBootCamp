@@ -1,0 +1,54 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy (dev, qa, prod)'
+        required: true
+        default: 'dev'
+
+jobs:
+  terraform:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6.6
+
+    - name: Bootstrap backend
+      run: |
+        chmod +x terraform-manifests/scripts/bootstrap.sh
+        terraform-manifests/scripts/bootstrap.sh ${{ github.event.inputs.environment }}
+
+    - name: Terraform Init
+      run: |
+        cd terraform-manifests
+        terraform init -backend-config=../terraform-manifests/env/${{ github.event.inputs.environment }}.env -reconfigure
+
+    - name: Terraform Plan
+      run: |
+        cd terraform-manifests
+        terraform plan -var-file="${{ github.event.inputs.environment }}.tfvars"
+
+    - name: Terraform Apply
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        cd terraform-manifests
+        terraform apply -auto-approve -var-file="${{ github.event.inputs.environment }}.tfvars"
