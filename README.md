@@ -1,83 +1,129 @@
-# Terraform Azure Multitier Infrastructure Project
+# Terraform Azure Infrastructure Project
 
-This project provisions a multitier Azure infrastructure using Terraform and GitHub Actions.
+This repository defines a **multi-tier Infrastructure as Code (IaC)** solution for deploying and managing Azure resources using **Terraform** and **GitHub Actions**.
 
-## Features
+It supports:
+- Multiple environments (`dev`, `qa`, `prod`)
+- Modular backend provisioning for Terraform state
+- Automated deployments with CI/CD
+- A Linux VM running Apache Tomcat behind a Standard Load Balancer
+- A Bastion Host for secure access
+- NSGs, VNet, subnets, and version locking via `.terraform.lock.hcl`
 
-- Multi-environment support (dev, staging, prod)
-- Modular Terraform code: network, compute, bastion, and load balancer
-- Backend state stored in Azure Storage defined by `env/dev.env`
-- Apache Tomcat installed on web VMs via cloud-init
-- Bastion Host access to VMs for secure management
-- Load Balancer in front of web tier
+---
 
 ## Folder Structure
 
 ```
-.
-├── .github/workflows/         # GitHub Actions workflows
-├── env/                       # Environment variable files
-├── modules/                   # Reusable Terraform modules
-│   ├── network/               # VNet, Subnets, NSGs
-│   ├── compute/               # VM with Tomcat
-│   ├── lb/                    # Standard Load Balancer
-│   └── bastion/               # Bastion Host
-├── scripts/                   # Bootstrap and helper scripts
-├── terraform-manifests/      # Root Terraform config
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── dev.tfvars
-│   └── .terraform.lock.hcl
+terraform-manifests/
+├── .github/workflows/
+│   ├── ci.yml             # Terraform format/validate checks
+│   └── deploy.yml         # CI/CD deployment pipeline
+├── scripts/
+│   ├── bootstrap.sh       # Bootstrap backend infrastructure
+│   ├── deploy.sh          # Apply infrastructure per environment
+│   └── destroy.sh         # Tear down infrastructure
+├── backend/
+│   ├── backend.tf         # Storage Account, Container
+│   └── variables.tf       # Input variables for backend
+├── env/
+│   └── dev.env            # Environment-specific backend configs
+├── dev.tfvars             # Variables for the 'dev' environment
+├── main.tf                # Multi-tier application architecture
 └── README.md
 ```
 
-## Deployment
+---
 
-### 1. Bootstrap the backend
+## Environments
+
+Each environment (`dev`, `qa`, `prod`) has:
+- Its own state backend (Resource Group + Storage + Container)
+- Configs via `.tfvars` and `.env` files
+
+---
+
+## Components
+
+- **VNet + Subnets**: Segmented for web, app, db, and Bastion layers
+- **NSGs**: For secure subnet traffic control
+- **Load Balancer**: Standard Azure LB for frontend traffic
+- **Linux VM**: With Apache Tomcat + HTML page via `custom_data`
+- **Bastion Host**: Secure VM management access
+- **State Storage**: Configured via backend.tf and environment .env files
+
+---
+
+## Usage Instructions
+
+### 1. Bootstrap Backend Infrastructure
 
 ```bash
 ./scripts/bootstrap.sh dev
 ```
 
-### 2. Plan and apply infrastructure
+> Make sure your `env/dev.env` has values like:
+> ```bash
+> LOCATION=eastus
+> BACKEND_RG=rg-dev-tfstate
+> BACKEND_STORAGE=stdevtfstate001
+> CONTAINER_NAME=tfstate
+> ```
+
+---
+
+### 2. Deploy Infrastructure via CLI
 
 ```bash
-cd terraform-manifests
-terraform init -backend-config=../env/dev.env -reconfigure
-terraform plan -var-file="dev.tfvars"
-terraform apply -var-file="dev.tfvars"
+./scripts/deploy.sh dev
 ```
 
-## Access
+---
 
-- Web app: Access Apache Tomcat using public IP from Load Balancer
-- SSH access: via Bastion Host (IP in Azure portal)
+### 3. Destroy Infrastructure via CLI
 
-## GitHub Actions Workflows
+```bash
+./scripts/destroy.sh dev
+```
 
-### Manual Deployment
+---
 
-You can manually deploy the infrastructure from the **Actions** tab:
+### 4. Deploy via GitHub Actions
 
-- Navigate to `Terraform Deploy`
-- Click **Run workflow**
-- Select the environment (`dev`, `qa`, or `prod`)
+- Go to **Actions > Deploy Infrastructure**
+- Select environment: `dev`, `qa`, or `prod`
 
-### Manual Destruction
+---
 
-You can also destroy the infrastructure via the **Actions** tab:
+### 5. Destroy via GitHub Actions
 
-- Navigate to `Terraform Destroy`
-- Click **Run workflow**
-- Select the environment to destroy### Continuous Integration (CI)
+- Go to **Actions > Destroy Infrastructure**
+- Select environment: `dev`, `qa`, or `prod`
 
-On each push or PR to `main` branch, the following checks run automatically:
+---
 
-- `terraform fmt -check` for formatting consistency
-- `terraform validate` to ensure configuration correctness
+## CI/CD Pipelines
 
-### Environment-Level Approvals
+### ci.yml
+- Runs on `push` and `pull_request`
+- Checks formatting (`terraform fmt`)
+- Validates config (`terraform validate`)
 
-Use GitHub branch protection and environments for:
-- Requiring review before merging to `main`
-- Restricting deployment access
+### deploy.yml
+- Runs on workflow_dispatch or push to environment branches
+- Bootstraps backend (if needed)
+- Applies infrastructure using `terraform apply`
+
+---
+
+## Version Locking
+
+All providers and modules are locked in `.terraform.lock.hcl` for consistency across environments.
+
+---
+
+## Next Steps
+
+- Extend to add app and DB tiers with modules
+- Add outputs for DNS names, IPs
+- Configure remote state locking with Azure Blob lease
