@@ -113,6 +113,22 @@ AzureBootCamp/
 - **Missing config files error**: Ensure you're in the correct working directory (`terraform-manifests/backend` or `terraform-manifests`).
 - **Backend init required**: Run `terraform init -reconfigure` after any changes to backend config.
 - **Directory not found**: Ensure relative paths in `bootstrap.sh` and `deploy.yml` are accurate.
+- **Adding executable permissions to scripts**: Run the below git commands locally on Git bash to add executable 
+   permissions.
+- **Service Principle related issues** Run az ad sp create-for-rbac --name "github-terraform" --role="Contributor" 
+  --scopes="/subscriptions/<Your subscription ID>" --sdk-auth
+-    a. Go to Subscriptions > Your Subscription
+-    b. Click “Access control (IAM)”
+-    c. Click “+ Add” → “Add role assignment”
+-    d. Choose Role: Contributor
+-    e. In Assign access to: Select User, group, or service principal
+-    f. Click Select members, then search for your app name "github-terraform"
+-    g. Click Review + assign
+- **ssh key creation** Run the below command to create the ssh key 
+-    Gernerate the ssh keys under folder ssh-keys using command -
+-    ssh-keygen -m PEM -t rsa -b 4096 -C "azureuser@myserver" -f terraform-azure.pem  
+-    chmod 400 terraform-azure.pem
+
 
 ---
 
