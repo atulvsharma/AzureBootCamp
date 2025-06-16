@@ -3,14 +3,14 @@
 
 ENV=$1
 
-echo "Current path is $PWD"
-
 if [ -z "$ENV" ]; then
   echo "Usage: ./bootstrap.sh <environment>"
   exit 1
 fi
 
-ENV_FILE="env/${ENV}.env"
+#ENV_FILE="env/${ENV}.env"
+ENV_FILE="terraform-manifests/env/${ENV}.env"
+echo "Current path is $ENV_FILE"
 
 if [ ! -f "$ENV_FILE" ]; then
   echo "Environment file $ENV_FILE does not exist."
