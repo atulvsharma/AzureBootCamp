@@ -3,6 +3,8 @@
 
 ENV=$1
 
+echo "Current path is $PWD"
+
 if [ -z "$ENV" ]; then
   echo "Usage: ./bootstrap.sh <environment>"
   exit 1
