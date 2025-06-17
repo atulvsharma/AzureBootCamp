@@ -26,6 +26,9 @@ cd terraform-manifests/backend || exit
 
 echo "Initializing backend for environment: $ENV"
 terraform init -reconfigure
+
+terraform validate
+
 terraform apply -auto-approve \
   -var "resource_group_name=$BACKEND_RG" \
   -var "storage_account_name=$BACKEND_STORAGE" \
