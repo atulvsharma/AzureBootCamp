@@ -122,6 +122,18 @@ All providers and modules are locked in `.terraform.lock.hcl` for consistency ac
 
 ---
 
+## Errors and fixes**
+- Infinite loop on bootstrap.sh --> Unable to find reqquired backedn resources. Updated the terraform apply 
+command as below -
+
+terraform apply -auto-approve \
+  -var "resource_group_name=$BACKEND_RG" \
+  -var "storage_account_name=$BACKEND_STORAGE" \
+  -var "container_name=$CONTAINER_NAME" \
+  -var "location=$LOCATION"
+
+---
+
 ## Next Steps
 
 - Extend to add app and DB tiers with modules

@@ -1,22 +1,16 @@
-name: Terraform Deploy
+name: Deploy Infrastructure
 
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy (dev, qa, prod)'
+        description: 'Deployment Environment (e.g., dev, qa, prod)'
         required: true
         default: 'dev'
 
 jobs:
-  terraform:
-    name: 'Terraform Apply'
+  deploy:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        shell: bash
-
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -24,31 +18,38 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     steps:
-    - name: Checkout repo
+    - name: Checkout Repo
       uses: actions/checkout@v3
 
-    - name: Set up Terraform
+    - name: Set up Terraform CLI
       uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.6.6
 
-    - name: Bootstrap backend
+    - name: Load Environment Variables
       run: |
-        chmod +x terraform-manifests/scripts/bootstrap.sh
-        terraform-manifests/scripts/bootstrap.sh ${{ github.event.inputs.environment }}
+        ENV="${{ github.event.inputs.environment }}"
+        echo "ENV=$ENV" >> $GITHUB_ENV
+        source terraform-manifests/env/${ENV}.env
+        echo "TF_ENV=$environment" >> $GITHUB_ENV
+        echo "TF_BACKEND_RG=$backend_rg" >> $GITHUB_ENV
+        echo "TF_BACKEND_STORAGE=$backend_storage" >> $GITHUB_ENV
+        echo "TF_CONTAINER_NAME=$container_name" >> $GITHUB_ENV
+        echo "TF_LOCATION=$location" >> $GITHUB_ENV
 
     - name: Terraform Init
       run: |
         cd terraform-manifests
-        terraform init -backend-config=../terraform-manifests/env/${{ github.event.inputs.environment }}.env -reconfigure
+        terraform init -reconfigure \
+          -backend-config="resource_group_name=${TF_BACKEND_RG}" \
+          -backend-config="storage_account_name=${TF_BACKEND_STORAGE}" \
+          -backend-config="container_name=${TF_CONTAINER_NAME}" \
+          -backend-config="key=${TF_ENV}.terraform.tfstate"
 
     - name: Terraform Plan
       run: |
         cd terraform-manifests
-        terraform plan -var-file="${{ github.event.inputs.environment }}.tfvars"
+        terraform plan -var-file="${TF_ENV}.tfvars"
 
     - name: Terraform Apply
-      if: github.event_name == 'workflow_dispatch'
       run: |
         cd terraform-manifests
-        terraform apply -auto-approve -var-file="${{ github.event.inputs.environment }}.tfvars"
+        terraform apply -auto-approve -var-file="${TF_ENV}.tfvars"
