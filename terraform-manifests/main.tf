@@ -20,7 +20,7 @@ module "compute" {
 }
 
 module "lb" {
-  source              = "./moduterraform-manifestsles/lb"
+  source              = "./terraform-manifests/lb"
   resource_group_name = var.resource_group_name
   location            = var.location
   public_ip_id        = module.compute.web_ip_id
