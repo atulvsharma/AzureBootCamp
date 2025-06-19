@@ -46,7 +46,7 @@ jobs:
 
     - name: Terraform Plan
       run: |
-        cd modules
+        
         ls -la
         terraform plan -lock=false \
           -var-file="${TF_ENV}.tfvars" \
