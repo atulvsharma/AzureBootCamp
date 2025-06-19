@@ -48,7 +48,7 @@ jobs:
       run: |
         cd modules
         ls -la
-        terraform plan -lock-timeout=60s -var-file="${TF_ENV}.tfvars"
+        terraform plan -lock=false -var-file="${TF_ENV}.tfvars"
 
     - name: Terraform Apply
       run: |
