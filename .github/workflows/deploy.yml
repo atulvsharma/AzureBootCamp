@@ -48,7 +48,8 @@ jobs:
       run: |
         
         ls -la
-        echo $pwd
+        CURRENT_DIR=$(pwd)
+        echo "Current directory is: $CURRENT_DIR"
         terraform plan -lock=false \
           -var-file="/modules/${TF_ENV}.tfvars" \
           -var="ssh_public_key_path=${{ secrets.SSH_PUBLIC_KEY }}"
