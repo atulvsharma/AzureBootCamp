@@ -28,7 +28,7 @@ jobs:
       run: |
         ENV="${{ github.event.inputs.environment }}"
         echo "ENV=$ENV" >> $GITHUB_ENV
-        source terraform-manifests/env/${ENV}.env
+        source modules/env/${ENV}.env
         echo "TF_ENV=$environment" >> $GITHUB_ENV
         echo "TF_BACKEND_RG=$backend_rg" >> $GITHUB_ENV
         echo "TF_BACKEND_STORAGE=$backend_storage" >> $GITHUB_ENV
@@ -37,7 +37,7 @@ jobs:
 
     - name: Terraform Init
       run: |
-        cd terraform-manifests
+        cd modules
         terraform init -reconfigure \
           -backend-config="resource_group_name=${TF_BACKEND_RG}" \
           -backend-config="storage_account_name=${TF_BACKEND_STORAGE}" \
@@ -46,10 +46,10 @@ jobs:
 
     - name: Terraform Plan
       run: |
-        cd terraform-manifests
+        cd modules
         terraform plan -var-file="${TF_ENV}.tfvars"
 
     - name: Terraform Apply
       run: |
-        cd terraform-manifests
+        cd modules
         terraform apply -auto-approve -var-file="${TF_ENV}.tfvars"

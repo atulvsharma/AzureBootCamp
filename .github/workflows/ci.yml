@@ -23,7 +23,7 @@ jobs:
       - name: Load environment variables
         run: |
           echo "Loading env variables for environment: ${{ github.event.inputs.environment }}"
-          ENV_FILE="terraform-manifests/env/${{ github.event.inputs.environment }}.env"
+          ENV_FILE="modules/env/${{ github.event.inputs.environment }}.env"
           if [ ! -f "$ENV_FILE" ]; then
             echo "Environment file not found: $ENV_FILE"
             exit 1
@@ -33,7 +33,7 @@ jobs:
           set +a
 
       - name: Terraform Init
-        working-directory: terraform-manifests
+        working-directory: modules
         run: |
           terraform init -reconfigure \
             -backend-config="resource_group_name=$backend_rg" \
@@ -42,15 +42,15 @@ jobs:
             -backend-config="key=${environment}.terraform.tfstate"
 
       - name: Terraform Validate
-        working-directory: terraform-manifests
+        working-directory: modules
         run: terraform validate
 
       - name: Terraform Plan
-        working-directory: terraform-manifests
+        working-directory: modules
         run: terraform plan -var-file="${{ github.event.inputs.environment }}.tfvars"
 
       - name: Terraform Apply
-        working-directory: terraform-manifests
+        working-directory: modules
         run: terraform apply -auto-approve -var-file="${{ github.event.inputs.environment }}.tfvars"
 
     env:
