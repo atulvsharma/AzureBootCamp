@@ -37,7 +37,7 @@ jobs:
 
     - name: Terraform Init
       run: |
-        cd modules
+        
         terraform init -reconfigure \
           -backend-config="resource_group_name=${TF_BACKEND_RG}" \
           -backend-config="storage_account_name=${TF_BACKEND_STORAGE}" \
