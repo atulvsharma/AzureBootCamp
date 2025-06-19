@@ -1,9 +1,24 @@
+terraform {
+  backend "azurerm" {
+    # All actual values will be passed via -backend-config CLI
+  }
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
+
+  required_version = ">= 1.3.0"
+}
+
 provider "azurerm" {
   features {}
 }
 
 module "network" {
-  source              = "./network"
+  source              = "./modules/network"
   resource_group_name = var.resource_group_name
   location            = var.location
   vnet_name           = "vnet-dev"
@@ -11,7 +26,7 @@ module "network" {
 }
 
 module "compute" {
-  source                = "./compute"
+  source                = "./modules/compute"
   resource_group_name   = var.resource_group_name
   location              = var.location
   subnet_id             = module.network.web_subnet_id
@@ -20,14 +35,14 @@ module "compute" {
 }
 
 module "lb" {
-  source              = "./lb"
+  source              = "./modules/lb"
   resource_group_name = var.resource_group_name
   location            = var.location
   public_ip_id        = module.compute.web_ip_id
 }
 
 module "bastion" {
-  source                = "./bastion"
+  source                = "./modules/bastion"
   resource_group_name   = var.resource_group_name
   location              = var.location
   bastion_subnet_id     = module.network.bastion_subnet_id
