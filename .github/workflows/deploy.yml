@@ -29,7 +29,7 @@ jobs:
         ENV="${{ github.event.inputs.environment }}"
         echo "ENV=$ENV" >> $GITHUB_ENV
         source modules/env/${ENV}.env
-        echo "TF_ENV=$environment" >> $GITHUB_ENV
+        echo "TF_ENV=$ENV" >> $GITHUB_ENV
         echo "TF_BACKEND_RG=$backend_rg" >> $GITHUB_ENV
         echo "TF_BACKEND_STORAGE=$backend_storage" >> $GITHUB_ENV
         echo "TF_CONTAINER_NAME=$container_name" >> $GITHUB_ENV
@@ -42,6 +42,11 @@ jobs:
           -backend-config="storage_account_name=${TF_BACKEND_STORAGE}" \
           -backend-config="container_name=${TF_CONTAINER_NAME}" \
           -backend-config="key=${TF_ENV}.terraform.tfstate"
+
+    - name: Debug File Check
+      run: |
+            echo "TF_ENV=${TF_ENV}"
+            ls -l modules/${TF_ENV}.tfvars  
 
     - name: Terraform Plan
       run: |
