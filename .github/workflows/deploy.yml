@@ -53,7 +53,7 @@ jobs:
         pwd
 
             
-        terraform -chdir=modules plan -lock=false \
+        terraform plan -lock=false \
           -var-file="modules/${TF_ENV}.tfvars" \
           -var="ssh_public_key_path=${{ secrets.SSH_PUBLIC_KEY }}"
 
