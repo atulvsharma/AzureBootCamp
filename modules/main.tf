@@ -1,6 +1,6 @@
 terraform {
   backend "azurerm" {
-    # All actual values will be passed via -backend-config CLI
+    # All actual values are passed via -backend-config CLI args
   }
 
   required_providers {
@@ -18,15 +18,15 @@ provider "azurerm" {
 }
 
 module "network" {
-  source              = "./modules/network"
+  source              = "./network"
   resource_group_name = var.resource_group_name
   location            = var.location
-  vnet_name           = "vnet-dev"
+  vnet_name           = "vnet-${var.environment}"
   vnet_address_space  = ["10.0.0.0/16"]
 }
 
 module "compute" {
-  source                = "./modules/compute"
+  source                = "./compute"
   resource_group_name   = var.resource_group_name
   location              = var.location
   subnet_id             = module.network.web_subnet_id
@@ -35,14 +35,14 @@ module "compute" {
 }
 
 module "lb" {
-  source              = "./modules/lb"
+  source              = "./lb"
   resource_group_name = var.resource_group_name
   location            = var.location
   public_ip_id        = module.compute.web_ip_id
 }
 
 module "bastion" {
-  source                = "./modules/bastion"
+  source                = "./bastion"
   resource_group_name   = var.resource_group_name
   location              = var.location
   bastion_subnet_id     = module.network.bastion_subnet_id

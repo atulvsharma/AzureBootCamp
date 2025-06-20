@@ -37,8 +37,7 @@ jobs:
 
     - name: Terraform Init
       run: |
-        
-        terraform init -reconfigure \
+        terraform -chdir=modules init -reconfigure \
           -backend-config="resource_group_name=${TF_BACKEND_RG}" \
           -backend-config="storage_account_name=${TF_BACKEND_STORAGE}" \
           -backend-config="container_name=${TF_CONTAINER_NAME}" \
@@ -46,18 +45,11 @@ jobs:
 
     - name: Terraform Plan
       run: |
-        
-        ls -la
-        
-        echo "Current directory is: "
-        pwd
-
-            
-        terraform plan -lock=false \
-          -var-file="modules/${TF_ENV}.tfvars" \
+        terraform -chdir=modules plan -lock=false \
+          -var-file="${TF_ENV}.tfvars" \
           -var="ssh_public_key_path=${{ secrets.SSH_PUBLIC_KEY }}"
 
     - name: Terraform Apply
       run: |
-        cd modules
-        terraform apply -auto-approve -var-file="${TF_ENV}.tfvars"
+        terraform -chdir=modules apply -auto-approve \
+          -var-file="${TF_ENV}.tfvars"
